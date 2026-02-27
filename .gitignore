@@ -1,0 +1,24 @@
+node_modules/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+.DS_Store
+Thumbs.db
+
+dist/
+build/
+coverage/
+.nyc_output/
+.parcel-cache/
+
+# n8n specific
+.n8n
