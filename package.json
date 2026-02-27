@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-wa-akg",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "n8n node for WA-AKG WhatsApp Gateway",
   "keywords": [
     "n8ncommunity-node",
