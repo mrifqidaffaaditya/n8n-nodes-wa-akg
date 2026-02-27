@@ -2,7 +2,7 @@ name: Publish to NPM on Release
 
 on:
   release:
-    types: [published] # This triggers when you convert a pre-release to a Release, or create a new Release
+    types: [published, released] # Trigger when converting pre-release to Release or creating new Release
 
 jobs:
   publish_npm_latest:
