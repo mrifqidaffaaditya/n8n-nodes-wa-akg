@@ -1,0 +1,30 @@
+name: Publish to NPM on Release
+
+on:
+  release:
+    types: [published] # This triggers when you convert a pre-release to a Release, or create a new Release
+
+jobs:
+  publish_npm_latest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js for NPMJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org/'
+          
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Publish to NPM (Latest)
+        # This publishes practically tracking the version you released.
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
