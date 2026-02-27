@@ -22,3 +22,5 @@ coverage/
 
 # n8n specific
 .n8n
+
+n8n-nodes-wa-akg-*.tgz
