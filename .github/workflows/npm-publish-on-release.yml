@@ -25,11 +25,12 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          if [ "${{ github.event.release.prerelease }}" = "true" ]; then
-            echo "Publishing as BETA..."
+          VERSION=$(node -p "require('./package.json').version")
+          if [[ "$VERSION" == *"-beta"* ]]; then
+            echo "Version $VERSION contains '-beta'. Publishing with tag beta..."
             npm publish --tag beta
           else
-            echo "Publishing as LATEST..."
+            echo "Version $VERSION does not contain '-beta'. Publishing as latest..."
             npm publish
           fi
         env:
