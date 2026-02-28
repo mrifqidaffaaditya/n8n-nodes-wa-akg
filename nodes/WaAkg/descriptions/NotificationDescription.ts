@@ -21,15 +21,15 @@ export const notificationFields: INodeProperties[] = [
         type: 'fixedCollection',
         default: {},
         typeOptions: { multipleValues: true },
-        description: 'Key-Value pairs defining notification details',
+        description: 'Key-Value pairs defining notification details. E.g. name: title, value: "New Alert"',
         displayOptions: { show: { resource: ['notification'], operation: ['create'] } },
         options: [
             {
                 name: 'propertyValues',
                 displayName: 'Property',
                 values: [
-                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Detail Name' },
-                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Detail Value' },
+                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Detail Name. E.g. "title"' },
+                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Detail Value. E.g. "Alert!"' },
                 ],
             },
         ],

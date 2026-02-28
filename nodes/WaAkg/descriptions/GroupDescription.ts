@@ -25,8 +25,8 @@ export const groupOperations: INodeProperties[] = [
 ];
 
 export const groupFields: INodeProperties[] = [
-    { displayName: 'Group Subject (Name)', name: 'groupSubject', type: 'string', required: true, default: '', description: 'The new or initial subject (name) of the group', displayOptions: { show: { resource: ['group'], operation: ['create', 'updateSubject'] } } },
-    { displayName: 'Participant JIDs', name: 'participants', type: 'string', required: true, default: '', description: 'Comma-separated list of WhatsApp JIDs to add, remove, or promote', displayOptions: { show: { resource: ['group'], operation: ['create', 'updateMembers'] } } },
+    { displayName: 'Group Subject (Name)', name: 'groupSubject', type: 'string', required: true, default: '', description: 'The new or initial subject (name) of the group. E.g. "My Family Group"', displayOptions: { show: { resource: ['group'], operation: ['create', 'updateSubject'] } } },
+    { displayName: 'Participant JIDs', name: 'participants', type: 'string', required: true, default: '', description: 'Comma-separated list of WhatsApp JIDs. E.g. "62811@s.w, 62822@s.w"', displayOptions: { show: { resource: ['group'], operation: ['create', 'updateMembers'] } } },
     {
         displayName: 'Member Action',
         name: 'memberAction',
@@ -42,8 +42,8 @@ export const groupFields: INodeProperties[] = [
         description: 'Action to perform on the group members',
         displayOptions: { show: { resource: ['group'], operation: ['updateMembers'] } },
     },
-    { displayName: 'Invite Code', name: 'inviteCode', type: 'string', required: true, default: '', description: 'The invite code of the group', displayOptions: { show: { resource: ['group'], operation: ['acceptInvite'] } } },
-    { displayName: 'Picture URL', name: 'pictureUrl', type: 'string', required: true, default: '', description: 'Publicly accessible URL of the new group profile picture', displayOptions: { show: { resource: ['group'], operation: ['updatePicture'] } } },
+    { displayName: 'Invite Code', name: 'inviteCode', type: 'string', required: true, default: '', description: 'The invite code of the group. E.g. "J7A9xxxxx"', displayOptions: { show: { resource: ['group'], operation: ['acceptInvite'] } } },
+    { displayName: 'Picture URL', name: 'pictureUrl', type: 'string', required: true, default: '', description: 'Publicly accessible URL of the new group profile picture. E.g. https://domain.com/group-icon.jpg', displayOptions: { show: { resource: ['group'], operation: ['updatePicture'] } } },
     {
         displayName: 'Settings Updates (Key-Value)',
         name: 'groupSettings',
@@ -57,8 +57,8 @@ export const groupFields: INodeProperties[] = [
                 name: 'propertyValues',
                 displayName: 'Property',
                 values: [
-                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Setting Name' },
-                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting Value' },
+                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Setting Name. E.g. "announce" or "restrict"' },
+                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting Value. E.g. "true" or "false"' },
                 ],
             },
         ],
@@ -77,8 +77,8 @@ export const groupFields: INodeProperties[] = [
             },
         },
         options: [
-            { displayName: 'Group Description', name: 'groupDescription', type: 'string', typeOptions: { rows: 4 }, default: '', description: 'The text description for the group', displayOptions: { show: { '/operation': ['updateDescription'] } } },
-            { displayName: 'Disappearing Expiration (Seconds)', name: 'ephemeralExpiration', type: 'number', default: 86400, description: 'Seconds until messages disappear (e.g. 86400)', displayOptions: { show: { '/operation': ['setEphemeral'] } } },
+            { displayName: 'Group Description', name: 'groupDescription', type: 'string', typeOptions: { rows: 4 }, default: '', description: 'The text description for the group. E.g. "Welcome to the group!"', displayOptions: { show: { '/operation': ['updateDescription'] } } },
+            { displayName: 'Disappearing Expiration (Seconds)', name: 'ephemeralExpiration', type: 'number', default: 86400, description: 'Seconds until messages disappear. E.g. 86400 (for 24 hours). Setting to 0 disables it.', displayOptions: { show: { '/operation': ['setEphemeral'] } } },
         ],
     },
 ];

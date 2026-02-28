@@ -20,15 +20,15 @@ export const systemFields: INodeProperties[] = [
         type: 'fixedCollection',
         default: {},
         typeOptions: { multipleValues: true },
-        description: 'Key-Value pairs for system settings to override',
+        description: 'Key-Value pairs for system settings to override. E.g. name: theme, value: dark',
         displayOptions: { show: { resource: ['system'], operation: ['updateSettings'] } },
         options: [
             {
                 name: 'propertyValues',
                 displayName: 'Property',
                 values: [
-                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Setting Name' },
-                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting Value' },
+                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Setting Name. E.g. "theme"' },
+                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting Value. E.g. "dark"' },
                 ],
             },
         ],

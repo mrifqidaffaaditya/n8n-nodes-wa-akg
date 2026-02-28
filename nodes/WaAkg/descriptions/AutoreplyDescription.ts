@@ -15,6 +15,6 @@ export const autoreplyOperations: INodeProperties[] = [
 ];
 
 export const autoreplyFields: INodeProperties[] = [
-    { displayName: 'Auto Reply Config (JSON)', name: 'autoReplyData', type: 'string', typeOptions: { rows: 4 }, required: true, default: '{}', description: 'JSON configuration for the auto-reply rule', displayOptions: { show: { resource: ['autoreply'], operation: ['create'] } } },
-    { displayName: 'Auto Reply ID', name: 'replyId', type: 'string', required: true, default: '', description: 'The internal ID of the auto reply to delete', displayOptions: { show: { resource: ['autoreply'], operation: ['deleteOne'] } } },
+    { displayName: 'Auto Reply Config (JSON)', name: 'autoReplyData', type: 'string', typeOptions: { rows: 4 }, required: true, default: '{}', description: 'JSON configuration for the auto-reply rule. E.g. {"keyword": "help", "reply": "Hi!"}', displayOptions: { show: { resource: ['autoreply'], operation: ['create'] } } },
+    { displayName: 'Auto Reply ID', name: 'replyId', type: 'string', required: true, default: '', description: 'The internal ID of the auto reply to delete. E.g. "5f8a2b..."', displayOptions: { show: { resource: ['autoreply'], operation: ['deleteOne'] } } },
 ];

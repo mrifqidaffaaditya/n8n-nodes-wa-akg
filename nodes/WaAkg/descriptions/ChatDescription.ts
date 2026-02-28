@@ -20,6 +20,6 @@ export const chatOperations: INodeProperties[] = [
 ];
 
 export const chatFields: INodeProperties[] = [
-    { displayName: 'Phone Numbers (Comma-separated)', name: 'numbers', type: 'string', required: true, default: '', description: 'Phone numbers to check separated by commas (e.g. 62812..., 62813...)', displayOptions: { show: { resource: ['chat'], operation: ['check'] } } },
-    { displayName: 'Presence Type', name: 'presenceType', type: 'options', options: [{ name: 'Composing (Typing)', value: 'composing' }, { name: 'Recording (Audio)', value: 'recording' }, { name: 'Paused (Stop)', value: 'paused' }], default: 'composing', required: true, description: 'The status indicator to show in the target chat', displayOptions: { show: { resource: ['chat'], operation: ['presence'] } } },
+    { displayName: 'Phone Numbers (Comma-separated)', name: 'numbers', type: 'string', required: true, default: '', description: 'Phone numbers to check separated by commas. E.g. "6281234567, 6289876543"', displayOptions: { show: { resource: ['chat'], operation: ['check'] } } },
+    { displayName: 'Presence Type', name: 'presenceType', type: 'options', options: [{ name: 'Composing (Typing)', value: 'composing' }, { name: 'Recording (Audio)', value: 'recording' }, { name: 'Paused (Stop)', value: 'paused' }], default: 'composing', required: true, description: 'The status indicator to show in the target chat. E.g. "typing..."', displayOptions: { show: { resource: ['chat'], operation: ['presence'] } } },
 ];

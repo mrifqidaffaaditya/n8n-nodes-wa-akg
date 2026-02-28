@@ -18,9 +18,9 @@ export const labelOperations: INodeProperties[] = [
 ];
 
 export const labelFields: INodeProperties[] = [
-    { displayName: 'Label ID', name: 'labelId', type: 'string', required: true, default: '', description: 'The internal ID of the label', displayOptions: { show: { resource: ['label'], operation: ['update', 'delete', 'getChatsByLabel'] } } },
-    { displayName: 'Label Name', name: 'labelName', type: 'string', required: true, default: '', description: 'Display name color of the label', displayOptions: { show: { resource: ['label'], operation: ['create', 'update'] } } },
-    { displayName: 'Chat JID', name: 'chatJid', type: 'string', required: true, default: '', description: 'JID of the chat to add/remove labels', displayOptions: { show: { resource: ['label'], operation: ['getChatLabels', 'setChatLabels'] } } },
+    { displayName: 'Label ID', name: 'labelId', type: 'string', required: true, default: '', description: 'The internal ID of the label. E.g. "1" or "3"', displayOptions: { show: { resource: ['label'], operation: ['update', 'delete', 'getChatsByLabel'] } } },
+    { displayName: 'Label Name', name: 'labelName', type: 'string', required: true, default: '', description: 'Display name color of the label. E.g. "VIP Customers"', displayOptions: { show: { resource: ['label'], operation: ['create', 'update'] } } },
+    { displayName: 'Chat JID', name: 'chatJid', type: 'string', required: true, default: '', description: 'JID of the chat to add/remove labels. E.g. 628123@s.whatsapp.net', displayOptions: { show: { resource: ['label'], operation: ['getChatLabels', 'setChatLabels'] } } },
 
     {
         displayName: 'Additional Fields',
@@ -35,8 +35,8 @@ export const labelFields: INodeProperties[] = [
             },
         },
         options: [
-            { displayName: 'Color Integer', name: 'labelColor', type: 'number', default: 0, description: 'Color representation integer', displayOptions: { show: { '/operation': ['create', 'update'] } } },
-            { displayName: 'Label IDs Array (JSON)', name: 'labelIds', type: 'string', default: '[]', description: 'JSON array of Label IDs to enforce. Example: ["1", "3"]', displayOptions: { show: { '/operation': ['setChatLabels'] } } },
+            { displayName: 'Color Integer', name: 'labelColor', type: 'number', default: 0, description: 'Color representation integer. E.g. 4294967295', displayOptions: { show: { '/operation': ['create', 'update'] } } },
+            { displayName: 'Label IDs Array (JSON)', name: 'labelIds', type: 'string', default: '[]', description: 'JSON array of Label IDs to enforce. E.g. ["1", "3"]', displayOptions: { show: { '/operation': ['setChatLabels'] } } },
         ],
     },
 ];

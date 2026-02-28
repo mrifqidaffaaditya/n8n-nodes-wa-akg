@@ -20,8 +20,8 @@ export const sessionOperations: INodeProperties[] = [
 ];
 
 export const sessionFields: INodeProperties[] = [
-    { displayName: 'Target Session ID', name: 'targetSessionId', type: 'string', required: true, default: '', description: 'The ID of the session you want to manage', displayOptions: { show: { resource: ['session'], operation: ['getOne', 'action', 'getQr', 'updateSettings', 'delete', 'getBotConfig', 'updateBotConfig'] } } },
-    { displayName: 'Session Name', name: 'sessionName', type: 'string', required: true, default: '', description: 'A readable name for the new session', displayOptions: { show: { resource: ['session'], operation: ['create'] } } },
+    { displayName: 'Target Session ID', name: 'targetSessionId', type: 'string', required: true, default: '', description: 'The ID of the session you want to manage. E.g. "my_session_1"', displayOptions: { show: { resource: ['session'], operation: ['getOne', 'action', 'getQr', 'updateSettings', 'delete', 'getBotConfig', 'updateBotConfig'] } } },
+    { displayName: 'Session Name', name: 'sessionName', type: 'string', required: true, default: '', description: 'A readable name for the new session. E.g. "Customer Service Bot"', displayOptions: { show: { resource: ['session'], operation: ['create'] } } },
     { displayName: 'Session Action', name: 'sessionAction', type: 'options', required: true, options: [{ name: 'Start', value: 'start' }, { name: 'Stop', value: 'stop' }, { name: 'Restart', value: 'restart' }, { name: 'Logout', value: 'logout' }], default: 'start', description: 'The power action to perform on the session', displayOptions: { show: { resource: ['session'], operation: ['action'] } } },
     {
         displayName: 'Additional Fields',
@@ -35,7 +35,7 @@ export const sessionFields: INodeProperties[] = [
             },
         },
         options: [
-            { displayName: 'Custom Session ID', name: 'newSessionId', type: 'string', default: '', description: 'Manually override the generated Session ID', displayOptions: { show: { '/operation': ['create'] } } },
+            { displayName: 'Custom Session ID', name: 'newSessionId', type: 'string', default: '', description: 'Manually override the generated Session ID. E.g. "custom_id_123"', displayOptions: { show: { '/operation': ['create'] } } },
             {
                 displayName: 'Bot Config (Key-Value)',
                 name: 'botConfig',
@@ -49,8 +49,8 @@ export const sessionFields: INodeProperties[] = [
                         name: 'propertyValues',
                         displayName: 'Property',
                         values: [
-                            { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Property Name' },
-                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Property Value' },
+                            { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Property Name. E.g. "prefix"' },
+                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Property Value. E.g. "!"' },
                         ],
                     },
                 ],
@@ -68,8 +68,8 @@ export const sessionFields: INodeProperties[] = [
                         name: 'propertyValues',
                         displayName: 'Property',
                         values: [
-                            { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Property Name' },
-                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Property Value' },
+                            { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Setting Name. E.g. "rejectCall"' },
+                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting Value. E.g. "true"' },
                         ],
                     },
                 ],

@@ -16,7 +16,7 @@ export const profileOperations: INodeProperties[] = [
 ];
 
 export const profileFields: INodeProperties[] = [
-    { displayName: 'Display Name', name: 'displayName', type: 'string', required: true, default: '', description: 'The new display name for your profile', displayOptions: { show: { resource: ['profile'], operation: ['updateName'] } } },
-    { displayName: 'Status Text', name: 'statusText', type: 'string', typeOptions: { rows: 2 }, required: true, default: '', description: 'The new "About" status text payload', displayOptions: { show: { resource: ['profile'], operation: ['updateStatus'] } } },
-    { displayName: 'Picture URL', name: 'profilePicUrl', type: 'string', required: true, default: '', description: 'Direct URL to an image file to set as your profile picture', displayOptions: { show: { resource: ['profile'], operation: ['updatePicture'] } } },
+    { displayName: 'Display Name', name: 'displayName', type: 'string', required: true, default: '', description: 'The new display name for your profile. E.g. "John Doe Inc."', displayOptions: { show: { resource: ['profile'], operation: ['updateName'] } } },
+    { displayName: 'Status Text', name: 'statusText', type: 'string', typeOptions: { rows: 2 }, required: true, default: '', description: 'The new "About" status text payload. E.g. "Busy"', displayOptions: { show: { resource: ['profile'], operation: ['updateStatus'] } } },
+    { displayName: 'Picture URL', name: 'profilePicUrl', type: 'string', required: true, default: '', description: 'Direct URL to an image file to set as your profile picture. E.g. https://domain.com/me.jpg', displayOptions: { show: { resource: ['profile'], operation: ['updatePicture'] } } },
 ];
