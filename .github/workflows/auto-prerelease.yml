@@ -42,7 +42,7 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           body: "Automated test build from main branch."
-          prerelease: true
-          draft: false
+          prerelease: false
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
