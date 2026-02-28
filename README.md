@@ -1,6 +1,6 @@
 # WA-AKG n8n Community Node
 
-![WA-AKG Logo](https://wa-akg.aikeigroup.net/logo.png)
+![WA-AKG Logo](https://cdn.keidev.my.id/main-web/archive/1772213183992-AiKei%20Group.svg)
 
 [![npm version](https://badge.fury.io/js/n8n-nodes-wa-akg.svg)](https://badge.fury.io/js/n8n-nodes-wa-akg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

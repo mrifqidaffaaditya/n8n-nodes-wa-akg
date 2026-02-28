@@ -23,8 +23,14 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Publish to NPM (Latest)
-        # This publishes practically tracking the version you released.
-        run: npm publish
+      - name: Publish to NPM
+        run: |
+          if [ "${{ github.event.release.prerelease }}" = "true" ]; then
+            echo "Publishing as BETA..."
+            npm publish --tag beta
+          else
+            echo "Publishing as LATEST..."
+            npm publish
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
