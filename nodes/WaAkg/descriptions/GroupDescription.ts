@@ -25,11 +25,44 @@ export const groupOperations: INodeProperties[] = [
 ];
 
 export const groupFields: INodeProperties[] = [
-    { displayName: 'Group Subject (Name)', name: 'groupSubject', type: 'string', required: true, default: '', description: 'The display name/title for the group', displayOptions: { show: { resource: ['group'], operation: ['create', 'updateSubject'] } } },
-    { displayName: 'Participants (Comma-separated JIDs)', name: 'participants', type: 'string', required: true, default: '', description: 'Provide participant JIDs separated by commas', displayOptions: { show: { resource: ['group'], operation: ['create', 'updateMembers'] } } },
-    { displayName: 'Member Action', name: 'memberAction', type: 'options', options: [{ name: 'Add Members', value: 'add' }, { name: 'Remove Members', value: 'remove' }, { name: 'Promote to Admin', value: 'promote' }, { name: 'Demote to Member', value: 'demote' }], required: true, default: 'add', description: 'The action to perform on the target participants', displayOptions: { show: { resource: ['group'], operation: ['updateMembers'] } } },
-    { displayName: 'Invite Code', name: 'inviteCode', type: 'string', required: true, default: '', description: 'The WhatsApp group invite string', displayOptions: { show: { resource: ['group'], operation: ['acceptInvite'] } } },
-    { displayName: 'Picture URL', name: 'pictureUrl', type: 'string', required: true, default: '', description: 'Direct URL to an image file', displayOptions: { show: { resource: ['group'], operation: ['updatePicture'] } } },
+    { displayName: 'Group Subject (Name)', name: 'groupSubject', type: 'string', required: true, default: '', description: 'The new or initial subject (name) of the group', displayOptions: { show: { resource: ['group'], operation: ['create', 'updateSubject'] } } },
+    { displayName: 'Participant JIDs', name: 'participants', type: 'string', required: true, default: '', description: 'Comma-separated list of WhatsApp JIDs to add, remove, or promote', displayOptions: { show: { resource: ['group'], operation: ['create', 'updateMembers'] } } },
+    {
+        displayName: 'Member Action',
+        name: 'memberAction',
+        type: 'options',
+        options: [
+            { name: 'Add', value: 'add' },
+            { name: 'Remove', value: 'remove' },
+            { name: 'Promote', value: 'promote' },
+            { name: 'Demote', value: 'demote' },
+        ],
+        required: true,
+        default: 'add',
+        description: 'Action to perform on the group members',
+        displayOptions: { show: { resource: ['group'], operation: ['updateMembers'] } },
+    },
+    { displayName: 'Invite Code', name: 'inviteCode', type: 'string', required: true, default: '', description: 'The invite code of the group', displayOptions: { show: { resource: ['group'], operation: ['acceptInvite'] } } },
+    { displayName: 'Picture URL', name: 'pictureUrl', type: 'string', required: true, default: '', description: 'Publicly accessible URL of the new group profile picture', displayOptions: { show: { resource: ['group'], operation: ['updatePicture'] } } },
+    {
+        displayName: 'Settings Updates (Key-Value)',
+        name: 'groupSettings',
+        type: 'fixedCollection',
+        default: {},
+        typeOptions: { multipleValues: true },
+        description: 'Key-Value pairs for group settings to override (e.g., announce: true|false)',
+        displayOptions: { show: { resource: ['group'], operation: ['updateSettings'] } },
+        options: [
+            {
+                name: 'propertyValues',
+                displayName: 'Property',
+                values: [
+                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Setting Name' },
+                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting Value' },
+                ],
+            },
+        ],
+    },
 
     {
         displayName: 'Additional Fields',

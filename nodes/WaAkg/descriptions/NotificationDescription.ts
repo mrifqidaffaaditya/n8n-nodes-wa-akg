@@ -15,5 +15,23 @@ export const notificationOperations: INodeProperties[] = [
 ];
 
 export const notificationFields: INodeProperties[] = [
-    { displayName: 'Notification Content (JSON)', name: 'notifData', type: 'string', typeOptions: { rows: 4 }, required: true, default: '{}', description: 'JSON payload defining notification details', displayOptions: { show: { resource: ['notification'], operation: ['create'] } } },
+    {
+        displayName: 'Notification Content (Key-Value)',
+        name: 'notifData',
+        type: 'fixedCollection',
+        default: {},
+        typeOptions: { multipleValues: true },
+        description: 'Key-Value pairs defining notification details',
+        displayOptions: { show: { resource: ['notification'], operation: ['create'] } },
+        options: [
+            {
+                name: 'propertyValues',
+                displayName: 'Property',
+                values: [
+                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Detail Name' },
+                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Detail Value' },
+                ],
+            },
+        ],
+    },
 ];

@@ -14,5 +14,23 @@ export const systemOperations: INodeProperties[] = [
 ];
 
 export const systemFields: INodeProperties[] = [
-    { displayName: 'Settings Updates (JSON)', name: 'systemSettings', type: 'string', typeOptions: { rows: 4 }, required: true, default: '{}', description: 'JSON payload of key-value system settings to override', displayOptions: { show: { resource: ['system'], operation: ['updateSettings'] } } },
+    {
+        displayName: 'Settings Updates (Key-Value)',
+        name: 'systemSettings',
+        type: 'fixedCollection',
+        default: {},
+        typeOptions: { multipleValues: true },
+        description: 'Key-Value pairs for system settings to override',
+        displayOptions: { show: { resource: ['system'], operation: ['updateSettings'] } },
+        options: [
+            {
+                name: 'propertyValues',
+                displayName: 'Property',
+                values: [
+                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Setting Name' },
+                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting Value' },
+                ],
+            },
+        ],
+    },
 ];

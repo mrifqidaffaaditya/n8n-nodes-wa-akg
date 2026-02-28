@@ -36,8 +36,44 @@ export const sessionFields: INodeProperties[] = [
         },
         options: [
             { displayName: 'Custom Session ID', name: 'newSessionId', type: 'string', default: '', description: 'Manually override the generated Session ID', displayOptions: { show: { '/operation': ['create'] } } },
-            { displayName: 'Bot Config (JSON)', name: 'botConfig', type: 'string', default: '', description: 'JSON object containing bot configuration parameters', displayOptions: { show: { '/operation': ['updateBotConfig'] } } },
-            { displayName: 'Settings (JSON)', name: 'sessionSettings', type: 'string', default: '', description: 'JSON object containing session settings updates', displayOptions: { show: { '/operation': ['updateSettings'] } } },
+            {
+                displayName: 'Bot Config (Key-Value)',
+                name: 'botConfig',
+                type: 'fixedCollection',
+                default: {},
+                typeOptions: { multipleValues: true },
+                description: 'Key-Value pairs for bot configuration',
+                displayOptions: { show: { '/operation': ['updateBotConfig'] } },
+                options: [
+                    {
+                        name: 'propertyValues',
+                        displayName: 'Property',
+                        values: [
+                            { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Property Name' },
+                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Property Value' },
+                        ],
+                    },
+                ],
+            },
+            {
+                displayName: 'Settings (Key-Value)',
+                name: 'sessionSettings',
+                type: 'fixedCollection',
+                default: {},
+                typeOptions: { multipleValues: true },
+                description: 'Key-Value pairs for session settings',
+                displayOptions: { show: { '/operation': ['updateSettings'] } },
+                options: [
+                    {
+                        name: 'propertyValues',
+                        displayName: 'Property',
+                        values: [
+                            { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Property Name' },
+                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Property Value' },
+                        ],
+                    },
+                ],
+            },
         ],
     },
 ];

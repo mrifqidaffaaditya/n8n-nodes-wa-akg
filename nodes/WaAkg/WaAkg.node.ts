@@ -123,6 +123,15 @@ export class WaAkg implements INodeType {
 
                 // Utility mapper for comma separated values
                 const toArray = (val: string) => val ? val.split(',').map(s => s.trim()).filter(Boolean) : [];
+                // Utility mapper for Key-Value dynamic arrays back to standard Objects
+                const mapProps = (collection: any) => {
+                    if (!collection || !collection.propertyValues) return {};
+                    return collection.propertyValues.reduce((acc: any, curr: any) => {
+                        try { acc[curr.name] = JSON.parse(curr.value); }
+                        catch (_) { acc[curr.name] = curr.value; }
+                        return acc;
+                    }, {});
+                };
 
                 // ==================== MESSAGE ====================
                 if (resource === 'message') {
@@ -237,10 +246,10 @@ export class WaAkg implements INodeType {
                     }
                     if (operation === 'action') responseData = await waAkgApiRequest.call(this, 'POST', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/${this.getNodeParameter('sessionAction', i)}`);
                     if (operation === 'getQr') responseData = await waAkgApiRequest.call(this, 'GET', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/qr`);
-                    if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'PATCH', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`, additionalFields.sessionSettings ? JSON.parse(additionalFields.sessionSettings as string) : {});
+                    if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'PATCH', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`, mapProps(this.getNodeParameter('sessionSettings', i) as any));
                     if (operation === 'delete') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`);
                     if (operation === 'getBotConfig') responseData = await waAkgApiRequest.call(this, 'GET', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/bot-config`);
-                    if (operation === 'updateBotConfig') responseData = await waAkgApiRequest.call(this, 'POST', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/bot-config`, additionalFields.botConfig ? JSON.parse(additionalFields.botConfig as string) : {});
+                    if (operation === 'updateBotConfig') responseData = await waAkgApiRequest.call(this, 'POST', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/bot-config`, mapProps(this.getNodeParameter('botConfig', i) as any));
                 }
 
                 // ==================== CHAT ====================
@@ -263,7 +272,7 @@ export class WaAkg implements INodeType {
                     if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', `/api/groups/${sessionId}/create`, { subject: this.getNodeParameter('groupSubject', i), participants: toArray(this.getNodeParameter('participants', i) as string) });
                     if (operation === 'updateSubject') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/groups/${sessionId}/${this.getNodeParameter('jid', i)}/subject`, { subject: this.getNodeParameter('groupSubject', i) });
                     if (operation === 'updateDescription') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/groups/${sessionId}/${this.getNodeParameter('jid', i)}/description`, { description: additionalFields.groupDescription || '' });
-                    if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/groups/${sessionId}/${this.getNodeParameter('jid', i)}/settings`);
+                    if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/groups/${sessionId}/${this.getNodeParameter('jid', i)}/settings`, mapProps(this.getNodeParameter('groupSettings', i) as any));
                     if (operation === 'updateMembers') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/groups/${sessionId}/${this.getNodeParameter('jid', i)}/members`, { action: this.getNodeParameter('memberAction', i), participants: toArray(this.getNodeParameter('participants', i) as string) });
                     if (operation === 'leave') responseData = await waAkgApiRequest.call(this, 'POST', `/api/groups/${sessionId}/${this.getNodeParameter('jid', i)}/leave`);
                     if (operation === 'getInvite') responseData = await waAkgApiRequest.call(this, 'GET', `/api/groups/${sessionId}/${this.getNodeParameter('jid', i)}/invite`);
@@ -336,8 +345,8 @@ export class WaAkg implements INodeType {
                 // ==================== USER ====================
                 if (resource === 'user') {
                     if (operation === 'getAll') responseData = await waAkgApiRequest.call(this, 'GET', '/api/users');
-                    if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', '/api/users', JSON.parse(this.getNodeParameter('userData', i, '{}') as string));
-                    if (operation === 'update') responseData = await waAkgApiRequest.call(this, 'PATCH', `/api/users/${this.getNodeParameter('userId', i)}`, JSON.parse(this.getNodeParameter('userData', i, '{}') as string));
+                    if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', '/api/users', mapProps(this.getNodeParameter('userData', i) as any));
+                    if (operation === 'update') responseData = await waAkgApiRequest.call(this, 'PATCH', `/api/users/${this.getNodeParameter('userId', i)}`, mapProps(this.getNodeParameter('userData', i) as any));
                     if (operation === 'delete') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/users/${this.getNodeParameter('userId', i)}`);
                     if (operation === 'getApiKey') responseData = await waAkgApiRequest.call(this, 'GET', '/api/user/api-key');
                     if (operation === 'generateApiKey') responseData = await waAkgApiRequest.call(this, 'POST', '/api/user/api-key');
@@ -347,20 +356,20 @@ export class WaAkg implements INodeType {
                 // ==================== NOTIFICATION ====================
                 if (resource === 'notification') {
                     if (operation === 'getAll') responseData = await waAkgApiRequest.call(this, 'GET', '/api/notifications');
-                    if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', '/api/notifications', JSON.parse(this.getNodeParameter('notifData', i, '{}') as string));
+                    if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', '/api/notifications', mapProps(this.getNodeParameter('notifData', i) as any));
                     if (operation === 'markRead') responseData = await waAkgApiRequest.call(this, 'PATCH', '/api/notifications/read');
                     if (operation === 'delete') responseData = await waAkgApiRequest.call(this, 'DELETE', '/api/notifications/delete');
                 }
 
                 // ==================== STATUS ====================
                 if (resource === 'status') {
-                    if (operation === 'post') responseData = await waAkgApiRequest.call(this, 'POST', `/api/status/${sessionId}/update`, JSON.parse(this.getNodeParameter('statusContent', i) as string));
+                    if (operation === 'post') responseData = await waAkgApiRequest.call(this, 'POST', `/api/status/${sessionId}/update`, mapProps(this.getNodeParameter('statusContent', i) as any));
                 }
 
                 // ==================== SYSTEM ====================
                 if (resource === 'system') {
                     if (operation === 'getSettings') responseData = await waAkgApiRequest.call(this, 'GET', '/api/settings/system');
-                    if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'POST', '/api/settings/system', JSON.parse(this.getNodeParameter('systemSettings', i, '{}') as string));
+                    if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'POST', '/api/settings/system', mapProps(this.getNodeParameter('systemSettings', i) as any));
                     if (operation === 'checkUpdates') responseData = await waAkgApiRequest.call(this, 'POST', '/api/system/check-updates');
                 }
 

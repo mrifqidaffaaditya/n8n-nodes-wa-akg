@@ -16,8 +16,25 @@ export const userOperations: INodeProperties[] = [
         default: 'getAll',
     },
 ];
-
 export const userFields: INodeProperties[] = [
     { displayName: 'User ID', name: 'userId', type: 'string', required: true, default: '', description: 'The internal ID of the WA-AKG user', displayOptions: { show: { resource: ['user'], operation: ['update', 'delete'] } } },
-    { displayName: 'User Metadata (JSON)', name: 'userData', type: 'string', required: true, default: '{}', description: 'JSON configuration containing user data attributes', displayOptions: { show: { resource: ['user'], operation: ['create', 'update'] } } },
+    {
+        displayName: 'User Metadata (Key-Value)',
+        name: 'userData',
+        type: 'fixedCollection',
+        default: {},
+        typeOptions: { multipleValues: true },
+        description: 'Key-Value pairs containing user data attributes',
+        displayOptions: { show: { resource: ['user'], operation: ['create', 'update'] } },
+        options: [
+            {
+                name: 'propertyValues',
+                displayName: 'Property',
+                values: [
+                    { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Metadata Name' },
+                    { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Metadata Value' },
+                ],
+            },
+        ],
+    },
 ];
