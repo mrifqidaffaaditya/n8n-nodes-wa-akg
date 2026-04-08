@@ -12,3 +12,4 @@ export * from './UserDescription';
 export * from './NotificationDescription';
 export * from './StatusDescription';
 export * from './SystemDescription';
+export * from './MediaDescription';

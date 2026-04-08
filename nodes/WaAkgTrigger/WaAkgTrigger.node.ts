@@ -19,16 +19,17 @@ export class WaAkgTrigger implements INodeType {
             name: 'WA-AKG Trigger',
         },
         inputs: [],
-        // Branching outputs for each event type
         outputs: [
             { type: 'main', displayName: 'Message Received' },
             { type: 'main', displayName: 'Message Sent' },
-            { type: 'main', displayName: 'Message Updated' },
-            { type: 'main', displayName: 'Message Read' },
-            { type: 'main', displayName: 'Group Joined' },
-            { type: 'main', displayName: 'Group Left' },
-            { type: 'main', displayName: 'Group Participants Changed' },
-            { type: 'main', displayName: 'Session Connection' },
+            { type: 'main', displayName: 'Message Status' },
+            { type: 'main', displayName: 'Message Edited' },
+            { type: 'main', displayName: 'Message Deleted' },
+            { type: 'main', displayName: 'Connection Update' },
+            { type: 'main', displayName: 'Group Update' },
+            { type: 'main', displayName: 'Group Participant' },
+            { type: 'main', displayName: 'Contact Update' },
+            { type: 'main', displayName: 'Status Update' },
         ] as INodeOutputConfiguration[],
         webhooks: [
             {
@@ -56,19 +57,21 @@ export class WaAkgTrigger implements INodeType {
         const eventTypes = [
             'message.received',
             'message.sent',
-            'message.updated',
-            'message.read',
-            'group.joined',
-            'group.left',
-            'group.participants_changed',
-            'session.connection', // Connected, Disconnected, QR
+            'message.status',
+            'message.edited',
+            'message.deleted',
+            'connection.update',
+            'group.update',
+            'group.participant',
+            'contact.update',
+            'status.update',
         ];
 
         const event = body.event;
         const index = eventTypes.indexOf(event);
 
-        // Initialize an array of empty arrays for each output
-        const returnData: INodeExecutionData[][] = Array(8).fill(null).map(() => []);
+        // Initialize an array of empty arrays for each of the 10 outputs
+        const returnData: INodeExecutionData[][] = Array(10).fill(null).map(() => []);
 
         if (index !== -1) {
             returnData[index] = [{ json: body }];

@@ -12,23 +12,26 @@ Official [n8n](https://n8n.io/) community node for **[WA-AKG WhatsApp Gateway](h
 With this node, you can fully control your WA-AKG WhatsApp Gateway directly from n8n:
 
 ### Action Node
-- **Messaging:** Send Text, Media, Location, Contact Cards, Polls, Lists, and Stickers. Reply, React, Star, Delete, Forward, Broadcast, Search, Download Media.
-- **Session Management:** Create, Start, Stop, Logout, Check Status, Get QR Code, Update Settings.
+- **Messaging:** Send Text, Media (Image/Video/Audio/Document), Location, Contact Cards, Polls, Lists, and Stickers. Reply, React, Star, Delete, Forward, Broadcast, Search, Download Media.
+- **Media Management:** List All Media, Get Specific File, Bulk Delete.
+- **Session Management:** Create, Start, Stop, Logout, Check Status, Get QR Code, Update/Delete Settings, Grant/Revoke Shared Access.
 - **Group Management:** Create Groups, Update Subjects/Descriptions/Settings, Add/Remove/Promote Members, Leave Groups, Manage Invites, Set Disappearing Messages.
 - **Chats & Contacts:** Get Chats, Mark as Read, Archive, Mute, Pin, Send Typing Presence, Block/Unblock Contacts.
-- **Labels, Auto-Replies, & Schedulers:** Manage Chat Labels, Automated Responses, and Scheduled Broadcasts.
+- **Labels, Auto-Replies, & Schedulers:** Manage Chat Labels, Get Label Chats, Automated Responses, and Scheduled Broadcasts.
 
 ### Trigger Node
 - Supports real-time webhooks without needing Session IDs directly.
-- **8 Dynamic Output Branches** depending on the event:
-  1. `Message Received`
+- **10 Dynamic Output Branches** depending on the precise web event:
+  1. `Message Received` (Default)
   2. `Message Sent`
-  3. `Message Updated`
-  4. `Message Read`
-  5. `Group Joined`
-  6. `Group Left`
-  7. `Group Participants Changed`
-  8. `Session Connection` (Connect, Disconnect, QR Ready)
+  3. `Message Status` (Delivered/Read)
+  4. `Message Edited`
+  5. `Message Deleted` (Revoked)
+  6. `Connection Update` (Connect, Disconnect, QR Ready)
+  7. `Group Update`
+  8. `Group Participant`
+  9. `Contact Update`
+  10. `Status Update`
 
 ## 📦 Installation
 

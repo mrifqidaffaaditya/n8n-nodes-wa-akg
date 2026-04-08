@@ -34,6 +34,7 @@ export class WaAkg implements INodeType {
                     { name: 'Group', value: 'group' },
                     { name: 'Label', value: 'label' },
                     { name: 'Message', value: 'message' },
+                    { name: 'Media', value: 'media' },
                     { name: 'Notification', value: 'notification' },
                     { name: 'Profile', value: 'profile' },
                     { name: 'Scheduler', value: 'scheduler' },
@@ -61,6 +62,7 @@ export class WaAkg implements INodeType {
             ...descriptions.notificationOperations,
             ...descriptions.statusOperations,
             ...descriptions.systemOperations,
+            ...descriptions.mediaOperations,
 
             // ==================== COMMON PARAMETERS ====================
             {
@@ -104,6 +106,7 @@ export class WaAkg implements INodeType {
             ...descriptions.notificationFields,
             ...descriptions.statusFields,
             ...descriptions.systemFields,
+            ...descriptions.mediaFields,
         ],
     };
 
@@ -144,11 +147,22 @@ export class WaAkg implements INodeType {
                         responseData = await waAkgApiRequest.call(this, 'POST', `/api/messages/${sessionId}/${jid}/send`, body);
                     }
                     if (operation === 'sendMedia') {
+                        const mediaUrl = this.getNodeParameter('mediaUrl', i) as string;
+                        const mediaType = this.getNodeParameter('mediaType', i) as string;
+                        const caption = additionalFields.caption || undefined;
+                        const docFileName = additionalFields.docFileName || undefined;
+                        let messagePayload: any = {};
+                        if (mediaType === 'image') {
+                            messagePayload = { image: { url: mediaUrl }, caption };
+                        } else if (mediaType === 'video') {
+                            messagePayload = { video: { url: mediaUrl }, caption };
+                        } else if (mediaType === 'audio') {
+                            messagePayload = { audio: { url: mediaUrl }, mimetype: 'audio/mp4' };
+                        } else if (mediaType === 'document') {
+                            messagePayload = { document: { url: mediaUrl }, mimetype: 'application/octet-stream', fileName: docFileName || 'file', caption };
+                        }
                         responseData = await waAkgApiRequest.call(this, 'POST', `/api/messages/${sessionId}/${jid}/send`, {
-                            message: {
-                                image: { url: this.getNodeParameter('mediaUrl', i) as string },
-                                caption: additionalFields.caption || undefined
-                            }
+                            message: messagePayload
                         });
                     }
                     if (operation === 'sendLocation') {
@@ -233,6 +247,10 @@ export class WaAkg implements INodeType {
                     if (operation === 'spam') {
                         responseData = await waAkgApiRequest.call(this, 'POST', `/api/messages/${sessionId}/${jid}/spam`);
                     }
+                    if (operation === 'getMediaFile') {
+                        const filename = this.getNodeParameter('mediaFilename', i) as string;
+                        responseData = await waAkgApiRequest.call(this, 'GET', `/api/media/${encodeURIComponent(filename)}`);
+                    }
                 }
 
                 // ==================== SESSION ====================
@@ -247,9 +265,12 @@ export class WaAkg implements INodeType {
                     if (operation === 'action') responseData = await waAkgApiRequest.call(this, 'POST', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/${this.getNodeParameter('sessionAction', i)}`);
                     if (operation === 'getQr') responseData = await waAkgApiRequest.call(this, 'GET', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/qr`);
                     if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'PATCH', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`, mapProps(this.getNodeParameter('sessionSettings', i) as any));
-                    if (operation === 'delete') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`);
+                    if (operation === 'deleteSettings') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`);
                     if (operation === 'getBotConfig') responseData = await waAkgApiRequest.call(this, 'GET', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/bot-config`);
                     if (operation === 'updateBotConfig') responseData = await waAkgApiRequest.call(this, 'POST', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/bot-config`, mapProps(this.getNodeParameter('botConfig', i) as any));
+                    if (operation === 'getAccessList') responseData = await waAkgApiRequest.call(this, 'GET', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/access`);
+                    if (operation === 'grantAccess') responseData = await waAkgApiRequest.call(this, 'POST', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/access`, { email: this.getNodeParameter('accessEmail', i) as string });
+                    if (operation === 'revokeAccess') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/access`, { userId: this.getNodeParameter('accessUserId', i) as string });
                 }
 
                 // ==================== CHAT ====================
@@ -340,6 +361,7 @@ export class WaAkg implements INodeType {
                         responseData = await waAkgApiRequest.call(this, 'PUT', `/api/labels/${sessionId}/chat/${this.getNodeParameter('chatJid', i)}/labels`, { labelIds: labelIds });
                     }
                     if (operation === 'getChatsByLabel') responseData = await waAkgApiRequest.call(this, 'GET', `/api/chats/${sessionId}/by-label/${this.getNodeParameter('labelId', i)}`);
+                    if (operation === 'getLabelChats') responseData = await waAkgApiRequest.call(this, 'GET', `/api/labels/${sessionId}/chats`, {}, { labelId: this.getNodeParameter('labelId', i) as string });
                 }
 
                 // ==================== USER ====================
@@ -371,6 +393,20 @@ export class WaAkg implements INodeType {
                     if (operation === 'getSettings') responseData = await waAkgApiRequest.call(this, 'GET', '/api/settings/system');
                     if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'POST', '/api/settings/system', mapProps(this.getNodeParameter('systemSettings', i) as any));
                     if (operation === 'checkUpdates') responseData = await waAkgApiRequest.call(this, 'POST', '/api/system/check-updates');
+                }
+
+                // ==================== MEDIA ====================
+                if (resource === 'media') {
+                    if (operation === 'list') responseData = await waAkgApiRequest.call(this, 'GET', '/api/media');
+                    if (operation === 'getFile') {
+                        const filename = this.getNodeParameter('mediaFilename', i) as string;
+                        responseData = await waAkgApiRequest.call(this, 'GET', `/api/media/${encodeURIComponent(filename)}`);
+                    }
+                    if (operation === 'bulkDelete') {
+                        const filenamesStr = this.getNodeParameter('mediaFilenames', i) as string;
+                        const filenames = filenamesStr ? filenamesStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+                        responseData = await waAkgApiRequest.call(this, 'DELETE', '/api/media', { filenames });
+                    }
                 }
 
                 const executionData = this.helpers.constructExecutionMetaData(

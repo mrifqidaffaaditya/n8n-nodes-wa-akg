@@ -17,7 +17,7 @@ export const webhookOperations: INodeProperties[] = [
 export const webhookFields: INodeProperties[] = [
     { displayName: 'Webhook ID', name: 'webhookId', type: 'string', required: true, default: '', description: 'The internal ID of the webhook to manage', displayOptions: { show: { resource: ['webhook'], operation: ['update', 'delete'] } } },
     { displayName: 'Webhook URL', name: 'webhookUrl', type: 'string', required: true, default: '', description: 'The endpoint URL that will receive HTTP POST events', displayOptions: { show: { resource: ['webhook'], operation: ['create', 'update'] } } },
-    { displayName: 'Subscribed Events (Comma-separated)', name: 'webhookEvents', type: 'string', required: true, default: 'messages.upsert', description: 'Available: messages.upsert, messages.update, message.receipt, group-participants.update, groups.upsert, groups.update, connection.update', displayOptions: { show: { resource: ['webhook'], operation: ['create', 'update'] } } },
+    { displayName: 'Subscribed Events (Comma-separated)', name: 'webhookEvents', type: 'string', required: true, default: 'message.received', description: 'Available: message.received, message.sent, message.status, message.edited, message.deleted, connection.update, group.update, group.participant, contact.update, status.update', displayOptions: { show: { resource: ['webhook'], operation: ['create', 'update'] } } },
 
     {
         displayName: 'Additional Fields',

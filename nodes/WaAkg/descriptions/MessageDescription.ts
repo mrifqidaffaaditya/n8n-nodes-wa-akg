@@ -9,7 +9,8 @@ export const messageOperations: INodeProperties[] = [
         displayOptions: { show: { resource: ['message'] } },
         options: [
             { name: 'Send Text', value: 'sendText', action: 'Send text message' },
-            { name: 'Send Media URL', value: 'sendMedia', action: 'Send media from URL' },
+            { name: 'Send Media', value: 'sendMedia', action: 'Send media from URL' },
+            { name: 'Get Media File', value: 'getMediaFile', action: 'Get a stored media file' },
             { name: 'Send Location', value: 'sendLocation', action: 'Send location' },
             { name: 'Send Contact', value: 'sendContact', action: 'Send contact card' },
             { name: 'Send Poll', value: 'sendPoll', action: 'Send poll' },
@@ -32,6 +33,8 @@ export const messageOperations: INodeProperties[] = [
 export const messageFields: INodeProperties[] = [
     { displayName: 'Text Message', name: 'text', type: 'string', typeOptions: { rows: 4 }, required: true, default: '', description: 'The text message payload to send. E.g. "Hello World!"', displayOptions: { show: { resource: ['message'], operation: ['sendText'] } } },
     { displayName: 'Media URL', name: 'mediaUrl', type: 'string', required: true, default: '', description: 'Direct URL to the image, video, audio, or document (e.g. https://domain.com/image.jpg)', displayOptions: { show: { resource: ['message'], operation: ['sendMedia'] } } },
+    { displayName: 'Media Type', name: 'mediaType', type: 'options', required: true, options: [{ name: 'Image', value: 'image' }, { name: 'Video', value: 'video' }, { name: 'Audio', value: 'audio' }, { name: 'Document', value: 'document' }], default: 'image', description: 'The type of media to send. This determines how WhatsApp will render the message.', displayOptions: { show: { resource: ['message'], operation: ['sendMedia'] } } },
+    { displayName: 'Media Filename', name: 'mediaFilename', type: 'string', required: true, default: '', description: 'The stored media filename to retrieve (e.g. "session1-ABCDEF123.jpg")', displayOptions: { show: { resource: ['message'], operation: ['getMediaFile'] } } },
     { displayName: 'Latitude', name: 'latitude', type: 'number', required: true, default: 0, description: 'Latitude coordinate (e.g. -6.2088)', displayOptions: { show: { resource: ['message'], operation: ['sendLocation'] } } },
     { displayName: 'Longitude', name: 'longitude', type: 'number', required: true, default: 0, description: 'Longitude coordinate (e.g. 106.8456)', displayOptions: { show: { resource: ['message'], operation: ['sendLocation'] } } },
     { displayName: 'Contacts (JSON)', name: 'contacts', type: 'string', typeOptions: { rows: 4 }, required: true, default: '[{"displayName": "John Doe", "vcard": "BEGIN:VCARD\\nVERSION:3.0\\nFN:John Doe\\nTEL;waid=1234567890:+1 234 567 890\\nEND:VCARD"}]', description: 'JSON array of contacts. E.g. [{"displayName": "Name", "vcard": "BEGIN:VCARD..."}]', displayOptions: { show: { resource: ['message'], operation: ['sendContact'] } } },
@@ -66,6 +69,7 @@ export const messageFields: INodeProperties[] = [
         options: [
             { displayName: 'Mentions (Comma-separated JIDs)', name: 'mentions', type: 'string', default: '', description: 'JIDs to mention separated by commas. E.g. 628123@s.whatsapp.net, 628456@s.whatsapp.net', displayOptions: { show: { '/operation': ['sendText', 'reply'] } } },
             { displayName: 'Caption', name: 'caption', type: 'string', typeOptions: { rows: 4 }, default: '', description: 'Text caption to accompany the media. E.g. "Look at this picture!"', displayOptions: { show: { '/operation': ['sendMedia'] } } },
+            { displayName: 'Document Filename', name: 'docFileName', type: 'string', default: '', description: 'Filename for the document (e.g. report.pdf). Only used when Media Type is Document.', displayOptions: { show: { '/operation': ['sendMedia'] } } },
             { displayName: 'Location Name', name: 'locationName', type: 'string', default: '', description: 'Display name of the place. E.g. "Starbucks Cafe"', displayOptions: { show: { '/operation': ['sendLocation'] } } },
             { displayName: 'Address', name: 'address', type: 'string', default: '', description: 'Address string of the place. E.g. "Jln. Sudirman No 1."', displayOptions: { show: { '/operation': ['sendLocation'] } } },
             { displayName: 'Selectable Count', name: 'selectableCount', type: 'number', default: 1, description: 'Number of options a user is allowed to select from the poll (e.g. 1 for single-choice)', displayOptions: { show: { '/operation': ['sendPoll'] } } },

@@ -12,13 +12,14 @@ export const labelOperations: INodeProperties[] = [
             { name: 'Get Chat Labels', value: 'getChatLabels', action: 'Get labels of a chat' },
             { name: 'Set Chat Labels', value: 'setChatLabels', action: 'Set labels on a chat' },
             { name: 'Get Chats By Label', value: 'getChatsByLabel', action: 'Get chats by label' },
+            { name: 'Get Label Chats', value: 'getLabelChats', action: 'Get chats assigned to label' },
         ],
         default: 'getAll',
     },
 ];
 
 export const labelFields: INodeProperties[] = [
-    { displayName: 'Label ID', name: 'labelId', type: 'string', required: true, default: '', description: 'The internal ID of the label. E.g. "1" or "3"', displayOptions: { show: { resource: ['label'], operation: ['update', 'delete', 'getChatsByLabel'] } } },
+    { displayName: 'Label ID', name: 'labelId', type: 'string', required: true, default: '', description: 'The internal ID of the label. E.g. "1" or "3"', displayOptions: { show: { resource: ['label'], operation: ['update', 'delete', 'getChatsByLabel', 'getLabelChats'] } } },
     { displayName: 'Label Name', name: 'labelName', type: 'string', required: true, default: '', description: 'Display name color of the label. E.g. "VIP Customers"', displayOptions: { show: { resource: ['label'], operation: ['create', 'update'] } } },
     { displayName: 'Chat JID', name: 'chatJid', type: 'string', required: true, default: '', description: 'JID of the chat to add/remove labels. E.g. 628123@s.whatsapp.net', displayOptions: { show: { resource: ['label'], operation: ['getChatLabels', 'setChatLabels'] } } },
 
