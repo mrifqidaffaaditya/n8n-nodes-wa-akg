@@ -19,6 +19,8 @@ export class WaAkgTrigger implements INodeType {
         defaults: {
             name: 'WA-AKG Trigger',
         },
+        // ✅ Tambahan kunci: memberitahu n8n ini bisa di-mock/pin
+        mockManualExecution: true,
         inputs: [],
         outputs: [
             { type: 'main', displayName: 'Message Received' },
@@ -78,8 +80,6 @@ export class WaAkgTrigger implements INodeType {
         const event = body.event as string;
         const index = eventTypes.indexOf(event);
 
-        // ✅ Semua output harus berupa array, TIDAK BOLEH null
-        // Output yang tidak aktif = array kosong []
         const returnData: INodeExecutionData[][] = Array(10).fill(null).map(() => []);
 
         const executionData: INodeExecutionData = {
