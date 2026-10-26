@@ -2,7 +2,7 @@
 
 All notable changes to the `n8n-nodes-wa-akg` package will be documented in this file.
 
-## [1.2.0] - 2026-10-26
+## [1.2.1] - 2026-10-26
 
 ### Added
 - **Message Resource**:
