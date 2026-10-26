@@ -7,7 +7,7 @@ export const autoreplyOperations: INodeProperties[] = [
         options: [
             { name: 'Get All', value: 'getAll', action: 'Get auto replies' },
             { name: 'Create', value: 'create', action: 'Create auto reply' },
-            { name: 'Delete All', value: 'deleteAll', action: 'Delete all auto replies' },
+            { name: 'Update', value: 'update', action: 'Update auto reply' },
             { name: 'Delete One', value: 'deleteOne', action: 'Delete auto reply' },
         ],
         default: 'getAll',
@@ -15,6 +15,6 @@ export const autoreplyOperations: INodeProperties[] = [
 ];
 
 export const autoreplyFields: INodeProperties[] = [
-    { displayName: 'Auto Reply Config (JSON)', name: 'autoReplyData', type: 'string', typeOptions: { rows: 4 }, required: true, default: '{}', description: 'JSON configuration for the auto-reply rule. E.g. {"keyword": "help", "reply": "Hi!"}', displayOptions: { show: { resource: ['autoreply'], operation: ['create'] } } },
-    { displayName: 'Auto Reply ID', name: 'replyId', type: 'string', required: true, default: '', description: 'The internal ID of the auto reply to delete. E.g. "5f8a2b..."', displayOptions: { show: { resource: ['autoreply'], operation: ['deleteOne'] } } },
+    { displayName: 'Auto Reply ID', name: 'replyId', type: 'string', required: true, default: '', description: 'The internal ID of the auto reply. E.g. "5f8a2b..."', displayOptions: { show: { resource: ['autoreply'], operation: ['update', 'deleteOne'] } } },
+    { displayName: 'Auto Reply Config (JSON)', name: 'autoReplyData', type: 'string', typeOptions: { rows: 4 }, required: true, default: '{"keyword": "help", "response": "Hello! How can I help you?"}', description: 'JSON configuration for the auto-reply rule. E.g. {"keyword": "help", "response": "Hi!"}', displayOptions: { show: { resource: ['autoreply'], operation: ['create', 'update'] } } },
 ];

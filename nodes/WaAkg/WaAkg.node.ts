@@ -39,7 +39,7 @@ export class WaAkg implements INodeType {
                     { name: 'Profile', value: 'profile' },
                     { name: 'Scheduler', value: 'scheduler' },
                     { name: 'Session', value: 'session' },
-                    { name: 'Status Update', value: 'status' },
+                    { name: 'Status Update [Deprecated]', value: 'status' },
                     { name: 'System', value: 'system' },
                     { name: 'User', value: 'user' },
                     { name: 'Webhook', value: 'webhook' },
@@ -68,27 +68,61 @@ export class WaAkg implements INodeType {
             {
                 displayName: 'Session ID', name: 'sessionId', type: 'string', required: true, default: '',
                 description: 'The Session ID to use for this request',
-                displayOptions: { show: { resource: ['message', 'chat', 'group', 'contact', 'profile', 'autoreply', 'scheduler', 'webhook', 'label', 'status'] } },
+                displayOptions: {
+                    show: {
+                        resource: ['message', 'chat', 'group', 'contact', 'profile', 'autoreply', 'scheduler', 'webhook', 'label', 'status'],
+                    },
+                },
+            },
+            {
+                displayName: 'Session ID', name: 'sessionId', type: 'string', required: true, default: '',
+                description: 'The Session ID to monitor',
+                displayOptions: {
+                    show: {
+                        resource: ['system'],
+                        operation: ['monitorSession'],
+                    },
+                },
             },
             {
                 displayName: 'Recipient JID', name: 'jid', type: 'string', required: true, default: '',
                 description: 'WhatsApp JID of the recipient (e.g., 628xxx@s.whatsapp.net for a user, xxxxx@g.us for a group)',
-                displayOptions: { show: { resource: ['message'], operation: ['sendText', 'sendMedia', 'sendLocation', 'sendContact', 'sendPoll', 'sendList', 'sendSticker', 'reply', 'react', 'star', 'delete', 'spam'] } },
+                displayOptions: {
+                    show: {
+                        resource: ['message'],
+                        operation: ['sendText', 'sendMedia', 'sendMediaFile', 'sendInteractive', 'sendAlbum', 'sendLocation', 'sendContact', 'sendPoll', 'sendList', 'sendSticker', 'reply', 'react', 'star', 'delete', 'edit', 'spam'],
+                    },
+                },
             },
             {
                 displayName: 'Chat JID', name: 'jid', type: 'string', required: true, default: '',
                 description: 'WhatsApp JID of the chat or contact',
-                displayOptions: { show: { resource: ['chat'], operation: ['getOne', 'read', 'archive', 'mute', 'pin', 'presence', 'profilePic'] } },
+                displayOptions: {
+                    show: {
+                        resource: ['chat'],
+                        operation: ['getOne', 'read', 'archive', 'mute', 'pin', 'presence', 'profilePic'],
+                    },
+                },
             },
             {
                 displayName: 'Group JID', name: 'jid', type: 'string', required: true, default: '',
                 description: 'WhatsApp JID of the group (e.g., xxxxx@g.us)',
-                displayOptions: { show: { resource: ['group'], operation: ['getOne', 'updateSubject', 'updateDescription', 'updateSettings', 'updateMembers', 'leave', 'getInvite', 'resetInvite', 'updatePicture', 'deletePicture', 'setEphemeral'] } },
+                displayOptions: {
+                    show: {
+                        resource: ['group'],
+                        operation: ['getOne', 'updateSubject', 'updateDescription', 'updateSettings', 'updateMembers', 'leave', 'getInvite', 'resetInvite', 'updatePicture', 'deletePicture', 'setEphemeral'],
+                    },
+                },
             },
             {
                 displayName: 'Contact JID', name: 'jid', type: 'string', required: true, default: '',
                 description: 'WhatsApp JID of the contact to block/unblock',
-                displayOptions: { show: { resource: ['contact'], operation: ['block', 'unblock'] } },
+                displayOptions: {
+                    show: {
+                        resource: ['contact'],
+                        operation: ['block', 'unblock'],
+                    },
+                },
             },
 
             // ===== FIELDS =====
@@ -119,13 +153,21 @@ export class WaAkg implements INodeType {
         for (let i = 0; i < items.length; i++) {
             try {
                 let responseData;
-                const sessionId = (['message', 'chat', 'group', 'contact', 'profile', 'autoreply', 'scheduler', 'webhook', 'label', 'status'].includes(resource))
+                const sessionId = (['message', 'chat', 'group', 'contact', 'profile', 'autoreply', 'scheduler', 'webhook', 'label', 'status'].includes(resource) || (resource === 'system' && operation === 'monitorSession'))
                     ? this.getNodeParameter('sessionId', i) as string : '';
 
                 const additionalFields = this.getNodeParameter('additionalFields', i, {}) as any;
 
                 // Utility mapper for comma separated values
                 const toArray = (val: string) => val ? val.split(',').map(s => s.trim()).filter(Boolean) : [];
+                // Utility safe JSON parser
+                const parseJson = (val: string, label: string) => {
+                    try {
+                        return JSON.parse(val || '{}');
+                    } catch (_) {
+                        throw new Error(`Invalid JSON in ${label}`);
+                    }
+                };
                 // Utility mapper for Key-Value dynamic arrays back to standard Objects
                 const mapProps = (collection: any) => {
                     if (!collection || !collection.propertyValues) return {};
@@ -138,13 +180,63 @@ export class WaAkg implements INodeType {
 
                 // ==================== MESSAGE ====================
                 if (resource === 'message') {
-                    const jid = ['sendText', 'sendMedia', 'sendLocation', 'sendContact', 'sendPoll', 'sendList', 'sendSticker', 'reply', 'react', 'star', 'delete', 'spam'].includes(operation)
+                    const jid = ['sendText', 'sendMedia', 'sendMediaFile', 'sendInteractive', 'sendAlbum', 'sendLocation', 'sendContact', 'sendPoll', 'sendList', 'sendSticker', 'reply', 'react', 'star', 'delete', 'edit', 'spam'].includes(operation)
                         ? this.getNodeParameter('jid', i) as string : '';
 
                     if (operation === 'sendText') {
                         const body: any = { message: { text: this.getNodeParameter('text', i) as string } };
                         if (additionalFields.mentions) body.mentions = toArray(additionalFields.mentions);
                         responseData = await waAkgApiRequest.call(this, 'POST', `/api/messages/${sessionId}/${jid}/send`, body);
+                    }
+                    if (operation === 'sendMediaFile') {
+                        const binaryPropertyName = this.getNodeParameter('binaryPropertyName', i, 'data') as string;
+                        const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
+                        const buffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
+                        const mediaType = this.getNodeParameter('mediaType', i) as string;
+                        const caption = additionalFields.caption || '';
+
+                        const formData: any = {
+                            file: {
+                                value: buffer,
+                                options: {
+                                    filename: binaryData.fileName || 'file',
+                                    contentType: binaryData.mimeType,
+                                },
+                            },
+                            type: mediaType,
+                            caption: caption,
+                        };
+
+                        responseData = await waAkgApiRequest.call(this, 'POST', `/api/messages/${sessionId}/${jid}/media`, {}, {}, undefined, formData);
+                    }
+                    if (operation === 'edit') {
+                        responseData = await waAkgApiRequest.call(this, 'PATCH', `/api/messages/${sessionId}/${jid}/${this.getNodeParameter('messageId', i) as string}`, {
+                            text: this.getNodeParameter('editText', i) as string,
+                        });
+                    }
+                    if (operation === 'sendInteractive') {
+                        const body: any = {
+                            body: this.getNodeParameter('interactiveBody', i) as string,
+                        };
+                        if (additionalFields.interactiveTitle) body.title = additionalFields.interactiveTitle;
+                        if (additionalFields.interactiveFooter) body.footer = additionalFields.interactiveFooter;
+                        if (additionalFields.interactiveButtons) {
+                            try { body.buttons = JSON.parse(additionalFields.interactiveButtons as string); }
+                            catch (_) { body.buttons = additionalFields.interactiveButtons; }
+                        }
+                        if (additionalFields.nativeFlowMessage) {
+                            try { body.nativeFlowMessage = JSON.parse(additionalFields.nativeFlowMessage as string); }
+                            catch (_) { body.nativeFlowMessage = additionalFields.nativeFlowMessage; }
+                        }
+                        responseData = await waAkgApiRequest.call(this, 'POST', `/api/messages/${sessionId}/${jid}/interactive`, body);
+                    }
+                    if (operation === 'sendAlbum') {
+                        let itemsPayload = [];
+                        try { itemsPayload = JSON.parse(this.getNodeParameter('albumItems', i) as string); }
+                        catch (_) { throw new Error('Invalid JSON array for Album Items'); }
+                        const body: any = { items: itemsPayload };
+                        if (additionalFields.albumCaption) body.caption = additionalFields.albumCaption;
+                        responseData = await waAkgApiRequest.call(this, 'POST', `/api/messages/${sessionId}/${jid}/album`, body);
                     }
                     if (operation === 'sendMedia') {
                         const mediaUrl = this.getNodeParameter('mediaUrl', i) as string;
@@ -235,6 +327,15 @@ export class WaAkg implements INodeType {
                             message: this.getNodeParameter('broadcastMsg', i) as string,
                         });
                     }
+                    if (operation === 'getBroadcastHistory') {
+                        const qs: any = {};
+                        if (additionalFields.limit !== undefined) qs.limit = additionalFields.limit;
+                        if (additionalFields.offset !== undefined) qs.offset = additionalFields.offset;
+                        responseData = await waAkgApiRequest.call(this, 'GET', `/api/messages/${sessionId}/broadcast/history`, {}, qs);
+                    }
+                    if (operation === 'getBroadcastLog') {
+                        responseData = await waAkgApiRequest.call(this, 'GET', `/api/messages/${sessionId}/broadcast/history/${this.getNodeParameter('broadcastLogId', i) as string}`);
+                    }
                     if (operation === 'search') {
                         const qs: any = {};
                         if (additionalFields.searchQuery) qs.q = additionalFields.searchQuery;
@@ -264,6 +365,7 @@ export class WaAkg implements INodeType {
                     }
                     if (operation === 'action') responseData = await waAkgApiRequest.call(this, 'POST', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/${this.getNodeParameter('sessionAction', i)}`);
                     if (operation === 'getQr') responseData = await waAkgApiRequest.call(this, 'GET', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/qr`);
+                    if (operation === 'getSettings') responseData = await waAkgApiRequest.call(this, 'GET', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`);
                     if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'PATCH', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`, mapProps(this.getNodeParameter('sessionSettings', i) as any));
                     if (operation === 'deleteSettings') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/settings`);
                     if (operation === 'getBotConfig') responseData = await waAkgApiRequest.call(this, 'GET', `/api/sessions/${this.getNodeParameter('targetSessionId', i)}/bot-config`);
@@ -278,10 +380,25 @@ export class WaAkg implements INodeType {
                     if (operation === 'getAll') responseData = await waAkgApiRequest.call(this, 'GET', `/api/chat/${sessionId}`);
                     if (operation === 'getOne') responseData = await waAkgApiRequest.call(this, 'GET', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}`);
                     if (operation === 'check') responseData = await waAkgApiRequest.call(this, 'POST', `/api/chat/${sessionId}/check`, { numbers: toArray(this.getNodeParameter('numbers', i) as string) });
-                    if (operation === 'read') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/read`);
-                    if (operation === 'archive') responseData = await waAkgApiRequest.call(this, 'POST', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/archive`);
-                    if (operation === 'mute') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/mute`);
-                    if (operation === 'pin') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/pin`);
+                    if (operation === 'read') {
+                        const readMsgIds = additionalFields.readMessageIds ? toArray(additionalFields.readMessageIds as string) : undefined;
+                        const body: any = readMsgIds && readMsgIds.length > 0 ? { messageIds: readMsgIds } : {};
+                        responseData = await waAkgApiRequest.call(this, 'PUT', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/read`, body);
+                    }
+                    if (operation === 'archive') {
+                        const archive = this.getNodeParameter('archiveChat', i, true) as boolean;
+                        responseData = await waAkgApiRequest.call(this, 'PUT', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/archive`, { archive });
+                    }
+                    if (operation === 'mute') {
+                        const mute = this.getNodeParameter('muteChat', i, true) as boolean;
+                        const body: any = { mute };
+                        if (additionalFields.muteDuration !== undefined) body.duration = additionalFields.muteDuration;
+                        responseData = await waAkgApiRequest.call(this, 'PUT', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/mute`, body);
+                    }
+                    if (operation === 'pin') {
+                        const pin = this.getNodeParameter('pinChat', i, true) as boolean;
+                        responseData = await waAkgApiRequest.call(this, 'PUT', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/pin`, { pin });
+                    }
                     if (operation === 'presence') responseData = await waAkgApiRequest.call(this, 'POST', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/presence`, { type: this.getNodeParameter('presenceType', i) as string });
                     if (operation === 'profilePic') responseData = await waAkgApiRequest.call(this, 'POST', `/api/chat/${sessionId}/${this.getNodeParameter('jid', i)}/profile-picture`);
                 }
@@ -323,16 +440,16 @@ export class WaAkg implements INodeType {
                 // ==================== AUTOREPLY ====================
                 if (resource === 'autoreply') {
                     if (operation === 'getAll') responseData = await waAkgApiRequest.call(this, 'GET', `/api/autoreplies/${sessionId}`);
-                    if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', `/api/autoreplies/${sessionId}`, JSON.parse(this.getNodeParameter('autoReplyData', i, '{}') as string));
-                    if (operation === 'deleteAll') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/autoreplies/${sessionId}`);
+                    if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', `/api/autoreplies/${sessionId}`, parseJson(this.getNodeParameter('autoReplyData', i, '{}') as string, 'Auto Reply Config'));
+                    if (operation === 'update') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/autoreplies/${sessionId}/${this.getNodeParameter('replyId', i)}`, parseJson(this.getNodeParameter('autoReplyData', i, '{}') as string, 'Auto Reply Config'));
                     if (operation === 'deleteOne') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/autoreplies/${sessionId}/${this.getNodeParameter('replyId', i)}`);
                 }
 
                 // ==================== SCHEDULER ====================
                 if (resource === 'scheduler') {
                     if (operation === 'getAll') responseData = await waAkgApiRequest.call(this, 'GET', `/api/scheduler/${sessionId}`);
-                    if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', `/api/scheduler/${sessionId}`, JSON.parse(this.getNodeParameter('scheduleData', i, '{}') as string));
-                    if (operation === 'deleteAll') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/scheduler/${sessionId}`);
+                    if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', `/api/scheduler/${sessionId}`, parseJson(this.getNodeParameter('scheduleData', i, '{}') as string, 'Schedule Config'));
+                    if (operation === 'update') responseData = await waAkgApiRequest.call(this, 'PUT', `/api/scheduler/${sessionId}/${this.getNodeParameter('scheduleId', i)}`, parseJson(this.getNodeParameter('scheduleData', i, '{}') as string, 'Schedule Config'));
                     if (operation === 'deleteOne') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/scheduler/${sessionId}/${this.getNodeParameter('scheduleId', i)}`);
                 }
 
@@ -346,6 +463,15 @@ export class WaAkg implements INodeType {
                         responseData = await waAkgApiRequest.call(this, 'PUT', `/api/webhooks/${sessionId}/${this.getNodeParameter('webhookId', i)}`, { url: this.getNodeParameter('webhookUrl', i), events: toArray(this.getNodeParameter('webhookEvents', i) as string), secret: additionalFields.webhookSecret || '' });
                     }
                     if (operation === 'delete') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/webhooks/${sessionId}/${this.getNodeParameter('webhookId', i)}`);
+                    if (operation === 'getLogs') {
+                        const qs: any = {};
+                        if (additionalFields.limit !== undefined) qs.limit = additionalFields.limit;
+                        if (additionalFields.offset !== undefined) qs.offset = additionalFields.offset;
+                        responseData = await waAkgApiRequest.call(this, 'GET', `/api/webhooks/${sessionId}/${this.getNodeParameter('webhookId', i)}/logs`, {}, qs);
+                    }
+                    if (operation === 'test') {
+                        responseData = await waAkgApiRequest.call(this, 'POST', `/api/webhooks/${sessionId}/${this.getNodeParameter('webhookId', i)}/test`);
+                    }
                 }
 
                 // ==================== LABEL ====================
@@ -368,6 +494,13 @@ export class WaAkg implements INodeType {
                 if (resource === 'user') {
                     if (operation === 'getAll') responseData = await waAkgApiRequest.call(this, 'GET', '/api/users');
                     if (operation === 'create') responseData = await waAkgApiRequest.call(this, 'POST', '/api/users', mapProps(this.getNodeParameter('userData', i) as any));
+                    if (operation === 'register') {
+                        responseData = await waAkgApiRequest.call(this, 'POST', '/api/auth/register', {
+                            name: this.getNodeParameter('registerName', i) as string,
+                            email: this.getNodeParameter('registerEmail', i) as string,
+                            password: this.getNodeParameter('registerPassword', i) as string,
+                        });
+                    }
                     if (operation === 'update') responseData = await waAkgApiRequest.call(this, 'PATCH', `/api/users/${this.getNodeParameter('userId', i)}`, mapProps(this.getNodeParameter('userData', i) as any));
                     if (operation === 'delete') responseData = await waAkgApiRequest.call(this, 'DELETE', `/api/users/${this.getNodeParameter('userId', i)}`);
                     if (operation === 'getApiKey') responseData = await waAkgApiRequest.call(this, 'GET', '/api/user/api-key');
@@ -385,7 +518,13 @@ export class WaAkg implements INodeType {
 
                 // ==================== STATUS ====================
                 if (resource === 'status') {
-                    if (operation === 'post') responseData = await waAkgApiRequest.call(this, 'POST', `/api/status/${sessionId}/update`, mapProps(this.getNodeParameter('statusContent', i) as any));
+                    if (operation === 'post') {
+                        throw new Error(
+                            'The standalone /api/status/:sessionId/update route was deprecated and removed in WA-AKG. ' +
+                            'For profile About/Bio status, please use Resource "Profile" with operation "Update Status". ' +
+                            'To send stories to WhatsApp, send a message to "status@broadcast".'
+                        );
+                    }
                 }
 
                 // ==================== SYSTEM ====================
@@ -393,6 +532,8 @@ export class WaAkg implements INodeType {
                     if (operation === 'getSettings') responseData = await waAkgApiRequest.call(this, 'GET', '/api/settings/system');
                     if (operation === 'updateSettings') responseData = await waAkgApiRequest.call(this, 'POST', '/api/settings/system', mapProps(this.getNodeParameter('systemSettings', i) as any));
                     if (operation === 'checkUpdates') responseData = await waAkgApiRequest.call(this, 'POST', '/api/system/check-updates');
+                    if (operation === 'monitorSystem') responseData = await waAkgApiRequest.call(this, 'GET', '/api/system/monitor');
+                    if (operation === 'monitorSession') responseData = await waAkgApiRequest.call(this, 'GET', `/api/system/monitor/${sessionId}`);
                 }
 
                 // ==================== MEDIA ====================

@@ -10,7 +10,8 @@ export const sessionOperations: INodeProperties[] = [
             { name: 'Create', value: 'create', action: 'Create session' },
             { name: 'Action', value: 'action', action: 'Start stop restart logout' },
             { name: 'Get QR', value: 'getQr', action: 'Get QR code' },
-            { name: 'Update Settings', value: 'updateSettings', action: 'Update settings' },
+            { name: 'Get Settings', value: 'getSettings', action: 'Get session settings' },
+            { name: 'Update Settings', value: 'updateSettings', action: 'Update session settings' },
             { name: 'Delete Settings', value: 'deleteSettings', action: 'Delete session settings' },
             { name: 'Get Bot Config', value: 'getBotConfig', action: 'Get bot config' },
             { name: 'Update Bot Config', value: 'updateBotConfig', action: 'Update bot config' },
@@ -23,7 +24,7 @@ export const sessionOperations: INodeProperties[] = [
 ];
 
 export const sessionFields: INodeProperties[] = [
-    { displayName: 'Target Session ID', name: 'targetSessionId', type: 'string', required: true, default: '', description: 'The ID of the session you want to manage. E.g. "my_session_1"', displayOptions: { show: { resource: ['session'], operation: ['getOne', 'action', 'getQr', 'updateSettings', 'deleteSettings', 'getBotConfig', 'updateBotConfig', 'getAccessList', 'grantAccess', 'revokeAccess'] } } },
+    { displayName: 'Target Session ID', name: 'targetSessionId', type: 'string', required: true, default: '', description: 'The ID of the session you want to manage. E.g. "my_session_1"', displayOptions: { show: { resource: ['session'], operation: ['getOne', 'action', 'getQr', 'getSettings', 'updateSettings', 'deleteSettings', 'getBotConfig', 'updateBotConfig', 'getAccessList', 'grantAccess', 'revokeAccess'] } } },
     { displayName: 'Session Name', name: 'sessionName', type: 'string', required: true, default: '', description: 'A readable name for the new session. E.g. "Customer Service Bot"', displayOptions: { show: { resource: ['session'], operation: ['create'] } } },
     { displayName: 'Session Action', name: 'sessionAction', type: 'options', required: true, options: [{ name: 'Start', value: 'start' }, { name: 'Stop', value: 'stop' }, { name: 'Restart', value: 'restart' }, { name: 'Logout', value: 'logout' }], default: 'start', description: 'The power action to perform on the session', displayOptions: { show: { resource: ['session'], operation: ['action'] } } },
     { displayName: 'User Email', name: 'accessEmail', type: 'string', required: true, default: '', description: 'Email of the user to grant access to. E.g. "user@example.com"', displayOptions: { show: { resource: ['session'], operation: ['grantAccess'] } } },
@@ -54,27 +55,27 @@ export const sessionFields: INodeProperties[] = [
                         name: 'propertyValues',
                         displayName: 'Property',
                         values: [
-                            { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Property Name. E.g. "prefix"' },
-                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Property Value. E.g. "!"' },
+                            { displayName: 'Key', name: 'name', type: 'string', default: '', description: 'Config key name' },
+                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Config key value' },
                         ],
                     },
                 ],
             },
             {
-                displayName: 'Settings (Key-Value)',
+                displayName: 'Session Settings (Key-Value)',
                 name: 'sessionSettings',
                 type: 'fixedCollection',
                 default: {},
                 typeOptions: { multipleValues: true },
-                description: 'Key-Value pairs for session settings',
+                description: 'Key-Value pairs for session configuration',
                 displayOptions: { show: { '/operation': ['updateSettings'] } },
                 options: [
                     {
                         name: 'propertyValues',
                         displayName: 'Property',
                         values: [
-                            { displayName: 'Name', name: 'name', type: 'string', default: '', description: 'Setting Name. E.g. "rejectCall"' },
-                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting Value. E.g. "true"' },
+                            { displayName: 'Key', name: 'name', type: 'string', default: '', description: 'Setting key name' },
+                            { displayName: 'Value', name: 'value', type: 'string', default: '', description: 'Setting key value' },
                         ],
                     },
                 ],

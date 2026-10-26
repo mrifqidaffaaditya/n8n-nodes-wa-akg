@@ -8,6 +8,8 @@ export const systemOperations: INodeProperties[] = [
             { name: 'Get Settings', value: 'getSettings', action: 'Get system settings' },
             { name: 'Update Settings', value: 'updateSettings', action: 'Update system settings' },
             { name: 'Check Updates', value: 'checkUpdates', action: 'Check for updates' },
+            { name: 'Monitor System Metrics', value: 'monitorSystem', action: 'Get global system metrics' },
+            { name: 'Monitor Session Metrics', value: 'monitorSession', action: 'Get session metrics' },
         ],
         default: 'getSettings',
     },

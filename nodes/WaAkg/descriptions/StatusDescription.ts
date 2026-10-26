@@ -5,7 +5,7 @@ export const statusOperations: INodeProperties[] = [
         displayName: 'Operation', name: 'operation', type: 'options', noDataExpression: true,
         displayOptions: { show: { resource: ['status'] } },
         options: [
-            { name: 'Post Status', value: 'post', action: 'Post status update' },
+            { name: 'Post Status [Deprecated]', value: 'post', action: 'Post status update (Deprecated in WA-AKG)' },
         ],
         default: 'post',
     },
@@ -13,12 +13,20 @@ export const statusOperations: INodeProperties[] = [
 
 export const statusFields: INodeProperties[] = [
     {
+        displayName: 'Notice',
+        name: 'statusNotice',
+        type: 'notice',
+        default: '',
+        description: 'Notice: The standalone /api/status/:sessionId/update route was deprecated and removed in WA-AKG. For profile About/Bio status, please use Resource "Profile" with operation "Update Status".',
+        displayOptions: { show: { resource: ['status'], operation: ['post'] } },
+    },
+    {
         displayName: 'Status Payload (Key-Value)',
         name: 'statusContent',
         type: 'fixedCollection',
         default: {},
         typeOptions: { multipleValues: true },
-        description: 'Key-Value pairs defining text, media, or contact status to post. E.g. name: "text", value: "Hello world!"',
+        description: 'Deprecated. Profile status is now managed under Resource "Profile".',
         displayOptions: { show: { resource: ['status'], operation: ['post'] } },
         options: [
             {

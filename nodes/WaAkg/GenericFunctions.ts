@@ -13,18 +13,20 @@ export async function waAkgApiRequest(
     body: any = {},
     qs: any = {},
     uri?: string,
+    formData?: any,
 ): Promise<any> {
     const credentials = await this.getCredentials('waAkgApi');
     const baseUrl = credentials.baseUrl as string;
 
     const options: IHttpRequestOptions = {
         method,
-        body,
+        body: formData || body,
         qs,
         url: uri || `${baseUrl}${resource}`,
-        json: true,
+        json: !formData,
+        headers: formData ? { 'Content-Type': 'multipart/form-data' } : {},
     };
-    if (Object.keys(options.body).length === 0) {
+    if (!formData && options.body && Object.keys(options.body).length === 0) {
         delete options.body;
     }
 

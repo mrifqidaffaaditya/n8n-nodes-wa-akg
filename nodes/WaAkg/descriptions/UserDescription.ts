@@ -6,7 +6,8 @@ export const userOperations: INodeProperties[] = [
         displayOptions: { show: { resource: ['user'] } },
         options: [
             { name: 'Get All', value: 'getAll', action: 'Get all users' },
-            { name: 'Create', value: 'create', action: 'Create user' },
+            { name: 'Create', value: 'create', action: 'Create user (Superadmin)' },
+            { name: 'Register', value: 'register', action: 'Register new user account' },
             { name: 'Update', value: 'update', action: 'Update user' },
             { name: 'Delete', value: 'delete', action: 'Delete user' },
             { name: 'Get API Key', value: 'getApiKey', action: 'Get API key' },
@@ -16,8 +17,12 @@ export const userOperations: INodeProperties[] = [
         default: 'getAll',
     },
 ];
+
 export const userFields: INodeProperties[] = [
     { displayName: 'User ID', name: 'userId', type: 'string', required: true, default: '', description: 'The internal ID of the WA-AKG user. E.g. "usr_123xyz"', displayOptions: { show: { resource: ['user'], operation: ['update', 'delete'] } } },
+    { displayName: 'Name', name: 'registerName', type: 'string', required: true, default: '', description: 'Full name for the new user account', displayOptions: { show: { resource: ['user'], operation: ['register'] } } },
+    { displayName: 'Email', name: 'registerEmail', type: 'string', required: true, default: '', description: 'Email address for the new user account', displayOptions: { show: { resource: ['user'], operation: ['register'] } } },
+    { displayName: 'Password', name: 'registerPassword', type: 'string', typeOptions: { password: true }, required: true, default: '', description: 'Password (min. 6 characters)', displayOptions: { show: { resource: ['user'], operation: ['register'] } } },
     {
         displayName: 'User Metadata (Key-Value)',
         name: 'userData',
